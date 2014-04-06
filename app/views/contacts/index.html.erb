@@ -1,9 +1,11 @@
 <h1>Wikipages</h1>
 
+<%= link_to "New Contact", new_contact_path %>
+
 <ul>
   <% @contacts.each do |contact| %>
     <li><a href="/contacts/<%= contact.id %>"><%= contact.name %></a></li>
   <% end %>
 </ul>
 
-<a href="/contacts/new">New contact</a>
+
