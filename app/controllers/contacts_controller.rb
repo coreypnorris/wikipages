@@ -1,6 +1,11 @@
 class ContactsController < ApplicationController
   def index
     @contacts = Contact.all
+
+    respond_to do |format|
+      format.html
+      format.js { render :json => @contacts }
+    end
   end
 
   def new
@@ -10,10 +15,18 @@ class ContactsController < ApplicationController
   def create
     @contact = Contact.new(contact_params)
     if @contact.save
-      flash[:notice] = "Contact added"
-      redirect_to contact_path(@contact)
+      respond_to do |format|
+        format.html do
+          flash[:notice] = "Contact added"
+          redirect_to contacts_path
+        end
+        format.json { render :json => @contacts, :status => 201 }
+      end
     else
-      render 'new'
+      respond_to do |format|
+        format { render 'new' }
+        format.json { render :json => @contacts, :status => 422 }
+      end
     end
   end
 
@@ -28,18 +41,31 @@ class ContactsController < ApplicationController
   def update
     @contact = Contact.find(params[:id])
     if @contact.update(contact_params)
-      flash[:notice] = "Contact changed"
-      redirect_to contact_path(@contact)
+      respond_to do |format|
+        format.html do
+          flash[:notice] = "Contact changed"
+          redirect_to contact_path(@contact)
+        end
+      format.json { head :no_content }
+    end
     else
-      render 'edit'
+      respond_to do |format|
+        format.html { render 'edit' }
+        format.json { render :json => @contact.errors, :status => 422}
+      end
     end
   end
 
   def destroy
     @contact = Contact.find(params[:id])
     @contact.destroy
-    flash[:notice] = "Contact removed"
-    redirect_to contacts_path
+    respond_to do |format|
+      format.html do
+        flash[:notice] = "Contact removed"
+        redirect_to contacts_path
+      end
+      format.json { head :no_content }
+    end
   end
 
   private
@@ -47,9 +73,3 @@ class ContactsController < ApplicationController
       params.require(:contact).permit(:name, :phone, :email)
     end
 end
-
-
-
-
-
-
