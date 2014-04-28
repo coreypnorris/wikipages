@@ -24,7 +24,7 @@ class ContactsController < ApplicationController
       end
     else
       respond_to do |format|
-        format { render 'new' }
+        format.html { render 'new' }
         format.json { render :json => @contact.errors, :status => 422 }
       end
     end
